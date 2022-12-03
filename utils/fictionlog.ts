@@ -1,4 +1,6 @@
-const checkFictionLog = async (jwt: string) => {
+import { NotifyData } from "../type/NotifyData";
+
+export const checkFictionLog = async (jwt: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `JWT ${jwt}`);
   myHeaders.append("Content-Type", "application/json");
@@ -25,7 +27,7 @@ const checkFictionLog = async (jwt: string) => {
 
   let hasNextPage = true;
   let endCursor = "";
-  let notifyData = "";
+  let notifyData: Array<NotifyData> = [];
   while(hasNextPage) {
     if(endCursor != "") {
         const newRaw = JSON.parse(requestOptions.body)
@@ -41,7 +43,7 @@ const checkFictionLog = async (jwt: string) => {
         const title = edge.node.book.title;
         const newChaptersCount = edge.node.newChaptersCount;
         if(newChaptersCount > 0) {
-            notifyData += `${title} has ${newChaptersCount} new chapters!`;
+          notifyData.push({title, newChaptersCount});
         }
     })
     hasNextPage = libraries.pageInfo.hasNextPage;
@@ -49,5 +51,3 @@ const checkFictionLog = async (jwt: string) => {
   }
   return notifyData;
 };
-
-export default checkFictionLog;

@@ -2,15 +2,23 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.11.10
+  '@types/node-cron': ^3.0.6
   axios: ^1.2.0
   dotenv: ^16.0.3
+  node-cron: ^3.0.2
 
 dependencies:
   '@types/node': 18.11.10
+  '@types/node-cron': 3.0.6
   axios: 1.2.0
   dotenv: 16.0.3
+  node-cron: 3.0.2
 
 packages:
+
+  /@types/node-cron/3.0.6:
+    resolution: {integrity: sha512-Qu9dpjkgj2JmzRmDMVzpt2dFKuJ7wma0mxEvbbgomwkhAdHKT2LpSLYHawzd9OeeP4HsyhmcV9o/xLgJyPNcgw==}
+    dev: false
 
   /@types/node/18.11.10:
     resolution: {integrity: sha512-juG3RWMBOqcOuXC643OAdSA525V44cVgGV6dUDuiFtss+8Fk5x1hI93Rsld43VeJVIeqlP9I7Fn9/qaVqoEAuQ==}
@@ -78,6 +86,18 @@ packages:
       mime-db: 1.52.0
     dev: false
 
+  /node-cron/3.0.2:
+    resolution: {integrity: sha512-iP8l0yGlNpE0e6q1o185yOApANRe47UPbLf4YxfbiNHt/RU5eBcGB/e0oudruheSf+LQeDMezqC5BVAb5wwRcQ==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      uuid: 8.3.2
+    dev: false
+
   /proxy-from-env/1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+    dev: false
+
+  /uuid/8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
     dev: false
