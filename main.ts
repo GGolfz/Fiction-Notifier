@@ -1,6 +1,7 @@
 import { Database } from "./type/database";
 import { assertEqual } from "./utils/assert";
 import { checkFictionLog } from "./utils/fictionlog";
+import { notify } from "./utils/notify";
 
 const dotenv = require("dotenv");
 const cron = require("node-cron");
@@ -19,10 +20,9 @@ const main = async () => {
     fictionLogNotify.length > 0 &&
     !assertEqual(fictionLogNotify, selfDB.fictionlog)
   ) {
-    console.log("Sending notification");
+    notify("FictionLog", fictionLogNotify);
     selfDB.fictionlog = fictionLogNotify;
-  } else {
-    console.log("No new chapters for fictionlog");
+    console.log("Notify New Chapters of FictionLog at " + new Date());
   }
 };
 
