@@ -29,5 +29,3 @@ const main = async () => {
 cron.schedule("*/1 * * * *", () => {
   main();
 });
-
-main();
