@@ -1,51 +1,57 @@
 import { NotifyData } from "../type/NotifyData";
-
+import { GraphQLClient, gql } from "graphql-request";
+import { FilterOption } from "../type/filterOption";
 export const checkFictionLog = async (jwt: string) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `JWT ${jwt}`);
-  myHeaders.append("Content-Type", "application/json");
-
-  var raw = JSON.stringify({
-    operationName: "QueryProductInLibrary",
-    variables: {
-      filter: {
-        type: "book",
-        contentType: "fiction",
-        sortBy: "activity",
-      },
+  const client = new GraphQLClient("https://api.k8s.fictionlog.co/graphql", {
+    headers: {
+      authorization: `JWT ${jwt}`,
     },
-    query:
-      "query QueryProductInLibrary($filter: LibrariesFilter) {\n  libraries(filter: $filter) {\n    pageInfo {\n      endCursor\n      hasNextPage\n      __typename\n    }\n    edges {\n      node {\n        _id\n        newChaptersCount\n        productType\n        book {\n          _id\n          title\n }\n }\n  }\n \n  }\n}\n",
   });
-
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow" as RequestRedirect,
-  };
+  const query = gql`
+    query QueryProductInLibrary($filter: LibrariesFilter) {
+      libraries(filter: $filter) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        edges {
+          node {
+            _id
+            newChaptersCount
+            book {
+              _id
+              title
+            }
+          }
+        }
+      }
+    }
+  `;
 
   let hasNextPage = true;
   let endCursor = "";
   let notifyData: Array<NotifyData> = [];
-  while(hasNextPage) {
-    if(endCursor != "") {
-        const newRaw = JSON.parse(requestOptions.body)
-        newRaw.variables.filter.beforeCursor  = endCursor;
-        requestOptions.body = JSON.stringify(newRaw);
+  let filter: FilterOption = {
+    type: "book",
+    contentType: "fiction",
+    sortBy: "activity",
+  };
+  while (hasNextPage) {
+    if (endCursor != "") {
+      filter.beforeCursor = endCursor;
     }
-    const response = await fetch("https://api.k8s.fictionlog.co/graphql", requestOptions)
-    const result = await response.text()
-    const res = JSON.parse(result);
-    const { libraries } = res.data;
+    const response = await client.request(query, {
+      filter,
+    });
+    const { libraries } = response;
     const { edges } = libraries;
     edges.forEach((edge: any) => {
-        const title = edge.node.book.title;
-        const newChaptersCount = edge.node.newChaptersCount;
-        if(newChaptersCount > 0) {
-          notifyData.push({title, newChaptersCount});
-        }
-    })
+      const title = edge.node.book.title;
+      const newChaptersCount = edge.node.newChaptersCount;
+      if (newChaptersCount > 0) {
+        notifyData.push({ title, newChaptersCount });
+      }
+    });
     hasNextPage = libraries.pageInfo.hasNextPage;
     endCursor = libraries.pageInfo.endCursor;
   }
